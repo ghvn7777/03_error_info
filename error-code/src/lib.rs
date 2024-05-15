@@ -37,6 +37,7 @@ where
         let hash = URL_SAFE_NO_PAD.encode(hash.to_be_bytes());
 
         Self {
+            // app_code 传进来是 &str，需要转换成 T
             app_code: T::from_str(app_code).expect("Can not parse app_code"),
             code,
             hash,

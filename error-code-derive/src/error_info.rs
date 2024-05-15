@@ -6,6 +6,10 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::DeriveInput;
 
+// 首先要创建一个结构体，用来存储我们的参数
+// 注意要加上 attribute error_info，这样我们的参数才能被捕获
+// ident, generics, data 是固定的，用来存储我们的 enum 名字，泛型，数据
+// app_type 是我们的 app_code 类型，prefix 是我们的错误码前缀，是自己在使用时候定义的
 #[derive(Debug, FromDeriveInput)]
 #[darling(attributes(error_info))]
 struct ErrorData {
@@ -16,6 +20,10 @@ struct ErrorData {
     prefix: String,
 }
 
+// 然后创建一个结构体，用来存储我们的 enum 的每一个 variant 的参数
+// 同样 ident 和 fields 是固定的，用来存储我们的 variant 名字和字段
+// 一开始这里我们不关心 fields 里的字段，所以用 Ignored，不过下面还是用 fields.style 来判断
+// code, app_code, client_msg 是我们的参数，注意这里要加上 default，因为我们的参数是可选的，如果没有就用默认值
 #[derive(Debug, FromVariant)]
 #[darling(attributes(error_info))]
 struct EnumVariants {
@@ -28,6 +36,7 @@ struct EnumVariants {
     client_msg: String,
 }
 
+// 这里基本上边打印边调试，随时用 cargo expand 和 cargo test 测试
 pub(crate) fn process_error_info(input: DeriveInput) -> TokenStream {
     let ErrorData {
         ident: name,
