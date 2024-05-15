@@ -6,6 +6,7 @@ use std::{
     str::FromStr,
 };
 
+// hash 是为了将客户端和服务端错误对应起来
 pub struct ErrorInfo<T> {
     pub app_code: T,        // could be HTTP 400 bad request
     pub code: &'static str, // something like "01E739"
@@ -47,6 +48,8 @@ where
     }
 }
 
+// 不需要 T 的时候，可以每个函数另启一个 impl<T> ErrorInfo<T> { ... }
+// 这样别的函数调用它的时候就不需要指定 T 了，不然容易编译报错
 impl<T> ErrorInfo<T> {
     pub fn client_msg(&self) -> &str {
         if self.client_msg.is_empty() {
